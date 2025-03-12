@@ -2,7 +2,7 @@ import { Telegraf, session } from 'telegraf';
 import { ConfigService, type IConfigService } from './config';
 
 import { type IBotContext } from './context';
-import { Command, StartCommand } from './commands';
+import { Command, StartCommand, SupportCommand } from './commands';
 
 class Bot {
   bot: Telegraf<IBotContext>;
@@ -16,7 +16,10 @@ class Bot {
   }
 
   init() {
-    this.commands = [new StartCommand(this.bot)];
+    this.commands = [
+      new StartCommand(this.bot),
+      new SupportCommand(this.bot, this.configService),
+    ];
 
     for (const command of this.commands) {
       command.handle();

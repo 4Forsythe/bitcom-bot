@@ -1,7 +1,10 @@
 import { Context } from 'telegraf';
 
-export interface ISessionData {}
+export interface ISessionData {
+  userId: string;
+  isSupportAskingQuestion: boolean;
+}
 
 export interface IBotContext extends Context {
-  session: ISessionData;
+  session: Partial<ISessionData>;
 }
