@@ -2,24 +2,12 @@ import { Telegraf, Markup } from 'telegraf';
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
 
 import { type IBotContext } from '@/context';
-import { type IConfigService } from '@/config';
 
 import { Command } from './command.class';
 
 export class SupportCommand extends Command {
-  private readonly superchats: number[] = [];
-
-  constructor(
-    bot: Telegraf<IBotContext>,
-    private readonly configService: IConfigService
-  ) {
+  constructor(bot: Telegraf<IBotContext>) {
     super(bot);
-
-    this.superchats = [
-      ...new Set(
-        this.configService.get('SUPERCHAT_IDS').split(',').map(Number)
-      ),
-    ];
   }
 
   private buttons: InlineKeyboardButton[] = [
@@ -45,16 +33,6 @@ export class SupportCommand extends Command {
       if (!ctx.session) ctx.session = {};
       ctx.reply('Пожалуйста, опишите свою проблему');
       ctx.session.isSupportAskingQuestion = true;
-    });
-
-    this.bot.on('message', (ctx) => {
-      if (!ctx.session || !ctx.session.isSupportAskingQuestion) return;
-
-      Promise.all(this.superchats.map((chatId) => ctx.forwardMessage(chatId)));
-
-      ctx.reply(
-        'Я передал ваше сообщение менеджеру. Как только получу ответ, вернусь в чат!'
-      );
     });
   }
 }
